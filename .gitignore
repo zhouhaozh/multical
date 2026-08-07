@@ -141,3 +141,11 @@ cython_debug/
 # IDE settings
 .vscode
 .idea
+# Project-local development artifacts
+.DS_Store
+scripts/node_modules/
+
+# Local calibration datasets and generated results
+/20260804/
+/charuco_l_split/
+/inspect_extrinsics.py
