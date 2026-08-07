@@ -19,13 +19,13 @@ import json
 import math
 import os
 import pickle
-import shutil
-import subprocess
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
+
+from multical.io.xlsx import write_report_workbook
 
 
 def _load_json(filename, description):
@@ -664,45 +664,10 @@ def analyze_extrinsic(filename, workspace_file=None):
 
 
 def _export_xlsx(report, destination, preview_dir=None):
-  exporter = (
-    Path(__file__).resolve().parent /
-    "export_calibration_analysis_xlsx.mjs"
+  del preview_dir
+  write_report_workbook(
+    destination, report, title="Multical calibration analysis"
   )
-  if not exporter.is_file():
-    raise RuntimeError("Excel exporter not found: {}".format(exporter))
-  node = os.environ.get("MULTICAL_NODE") or shutil.which("node")
-  if not node:
-    raise RuntimeError("Node.js is required to generate the Excel report")
-
-  destination.parent.mkdir(parents=True, exist_ok=True)
-  with tempfile.TemporaryDirectory(prefix="multical-report-") as temporary:
-    report_path = Path(temporary) / "calibration_analysis.json"
-    report_path.write_text(
-      json.dumps(report, indent=2, ensure_ascii=False) + "\n",
-      encoding="utf-8"
-    )
-    command = [node, str(exporter), str(report_path), str(destination)]
-    if preview_dir is not None:
-      command.append(str(preview_dir))
-    try:
-      subprocess.run(
-        command,
-        check=True,
-        capture_output=True,
-        text=True
-      )
-    except subprocess.CalledProcessError as error:
-      details = (error.stderr or error.stdout or "").strip()
-      raise RuntimeError(
-        "failed to generate Excel report: {}".format(details)
-      ) from error
-  # artifact-tool may emit a workbook-inspection sidecar beside the report.
-  # It is useful for automated QA but is not a user-facing pipeline output.
-  inspection_sidecar = Path(str(destination) + ".inspect.ndjson")
-  try:
-    inspection_sidecar.unlink()
-  except FileNotFoundError:
-    pass
 
 
 def build_report(

@@ -8,7 +8,6 @@ from typing import Optional
 
 import cv2
 import numpy as np
-import yaml
 from scipy import optimize
 from simple_parsing import choice
 
@@ -17,16 +16,7 @@ from multical.io.calibration_utils import (
   load_calibration_json,
   transform_from_json
 )
-
-
-def load_json_or_yaml(filename):
-  path = Path(filename)
-  text = path.read_text(encoding="utf-8")
-  return (
-    json.loads(text)
-    if path.suffix.lower() == ".json"
-    else yaml.safe_load(text)
-  )
+from multical.io.structured import load_json_or_yaml
 
 
 def load_observation_frames(filename):

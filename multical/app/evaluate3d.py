@@ -1,17 +1,15 @@
 """Evaluate reconstructed world points against measured 3D ground truth."""
 
 import json
-import os
-import shutil
-import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
 
-from multical.app.triangulate import load_json_or_yaml
 from multical.config.arguments import run_with
+from multical.io.structured import load_json_or_yaml
+from multical.io.xlsx import write_report_workbook
 
 
 UNIT_TO_METERS = {
@@ -142,38 +140,10 @@ def _statistics(errors):
 
 def export_evaluation_xlsx(json_file, xlsx_file):
   """Export the machine-readable evaluation as a human-readable workbook."""
-  script = (
-    Path(__file__).resolve().parents[2] /
-    "scripts" / "export_evaluation3d_xlsx.mjs"
+  report = json.loads(Path(json_file).read_text(encoding="utf-8"))
+  return write_report_workbook(
+    xlsx_file, report, title="Multical 3D evaluation"
   )
-  if not script.is_file():
-    raise RuntimeError(
-      "Excel exporter not found: {}".format(script)
-    )
-  node = os.environ.get("MULTICAL_NODE") or shutil.which("node")
-  if not node:
-    raise RuntimeError(
-      "Node.js is required to generate the Excel evaluation report"
-    )
-  try:
-    subprocess.run(
-      [node, str(script), str(json_file), str(xlsx_file)],
-      check=True,
-      capture_output=True,
-      text=True
-    )
-  except subprocess.CalledProcessError as error:
-    details = (error.stderr or error.stdout or "").strip()
-    raise RuntimeError(
-      "failed to generate Excel evaluation report: {}".format(details)
-    ) from error
-  # Keep only the user-facing workbook; discard artifact-tool's QA sidecar.
-  inspection_sidecar = Path(str(xlsx_file) + ".inspect.ndjson")
-  try:
-    inspection_sidecar.unlink()
-  except FileNotFoundError:
-    pass
-  return Path(xlsx_file)
 
 
 def evaluate_reconstruction(
