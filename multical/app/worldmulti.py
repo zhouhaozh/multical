@@ -7,7 +7,6 @@ from typing import Optional
 
 import cv2
 import numpy as np
-import yaml
 from scipy import optimize
 
 from multical.config.arguments import run_with
@@ -17,10 +16,9 @@ from multical.io.calibration_utils import (
   transform_from_rt,
   transform_to_json
 )
-from multical.app.world import (
-  detect_marker_centers,
-  resolve_capture_image
-)
+from multical.io.structured import load_json_or_yaml
+from multical.app.world import resolve_capture_image
+from multical.board.markers import detect_marker_centers
 
 
 _MARKER_QUALITY_DEFAULTS = {
@@ -36,14 +34,9 @@ _MARKER_QUALITY_DEFAULTS = {
 
 def _load_data(filename):
   path = Path(filename).resolve()
-  text = path.read_text(encoding="utf-8")
-  data = (
-    json.loads(text)
-    if path.suffix.lower() == ".json"
-    else yaml.safe_load(text)
+  data = load_json_or_yaml(
+    path, description="correspondences", require_mapping=True
   )
-  if not isinstance(data, dict):
-    raise ValueError("correspondences must be a YAML/JSON mapping")
   return path, data
 
 
