@@ -1,4 +1,9 @@
-# multical 
+# multical
+
+> This repository is a maintained fork of
+> [oliver-batchelor/multical](https://github.com/oliver-batchelor/multical).
+> It preserves the upstream LGPL-3.0 license and adds calibration quality,
+> world-frame reconstruction, evaluation, and reproducible pipeline tooling.
 
 
 Multi-camera calibration using one or more calibration patterns. 
@@ -8,9 +13,29 @@ Multi-camera calibration using one or more calibration patterns.
 
 [changelog](https://github.com/saulzar/multical/tree/master/example_boards)
 
-## Install
+## Install this fork
 
-The software here is presented as a library installable from PyPi `pip install multical`, and installs a script of the same name `multical`.
+```bash
+git clone git@github.com:zhouhaozh/multical.git
+cd multical
+python -m pip install -e .
+```
+
+For development, install the test and lint tools as well:
+
+```bash
+python -m pip install -e ".[dev]"
+```
+
+The fork supports Python 3.10 through 3.12. Large calibration datasets and
+generated results are intentionally not stored in Git; use
+`configs/pipeline.example.yaml` as the starting point for a local pipeline.
+
+## Upstream package
+
+The upstream project is published on PyPI as `multical` and installs a script
+of the same name. Installing `pip install multical` installs that upstream
+release, not the development version of this fork.
 
 
 ## Running multical application

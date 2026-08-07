@@ -2,9 +2,13 @@
 
 使用一个或多个标定板进行多相机标定。
 
-快速了解主要功能和流程，请参阅 [精简指南](README.quickstart.zh-CN.md)。
+> 本仓库是
+> [oliver-batchelor/multical](https://github.com/oliver-batchelor/multical)
+> 的维护型 Fork，保留上游 LGPL-3.0 许可证和作者信息。
 
-从数据采集、内参、相机间外参、世界外参到双目/多目世界三维重建的通用流程，请参阅 [端到端中文指南](README.end-to-end.zh-CN.md)。
+快速了解主要功能和流程，请参阅 [精简指南](Quickstart.md)。
+
+从数据采集、内参、相机间外参、世界外参到双目/多目世界三维重建的通用流程，请参阅 [端到端中文指南](README.calibration.zh-CN.md)。
 
 ![image](https://raw.githubusercontent.com/saulzar/multical/master/screenshots/image_view.png)
 ![image](https://raw.githubusercontent.com/saulzar/multical/master/screenshots/3d_view.png)
@@ -13,22 +17,25 @@
 
 ## 安装
 
-这个软件以 Python 库的形式发布，可以从 PyPI 安装：
+安装本 Fork 的开发版本：
 
 ```bash
-pip install multical
+git clone git@github.com:zhouhaozh/multical.git
+cd multical
+python -m pip install -e .
 ```
 
-安装后会提供一个同名命令行脚本：
+开发和测试环境使用：
+
+```bash
+python -m pip install -e ".[dev]"
+```
+
+项目支持 Python 3.10–3.12。`pip install multical` 安装的是上游 PyPI
+版本，不是本 Fork 的开发版本。安装后均提供同名命令：
 
 ```bash
 multical
-```
-
-如果是在本仓库源码目录中开发或调试，也可以使用：
-
-```bash
-uv pip install -e .
 ```
 
 推荐使用 `uv` 时，可以按下面方式创建虚拟环境并安装本项目：
